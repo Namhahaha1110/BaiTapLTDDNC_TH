@@ -125,7 +125,7 @@ class _InfoTabState extends State<InfoTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Tab Info (cập nhật DrawerHeader)',
+              'Tab Info',
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 14),
@@ -157,27 +157,28 @@ class _InfoTabState extends State<InfoTab> {
             ),
             const SizedBox(height: 8),
 
-            // Dùng ChoiceChip để không lỗi UI như Radio (bị xuống dòng)
-            Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children: [
-                ChoiceChip(
-                  label: const Text('Male'),
-                  selected: _gender == 0,
-                  onSelected: (_) => setState(() => _gender = 0),
-                ),
-                ChoiceChip(
-                  label: const Text('Female'),
-                  selected: _gender == 1,
-                  onSelected: (_) => setState(() => _gender = 1),
-                ),
-                ChoiceChip(
-                  label: const Text('Other'),
-                  selected: _gender == 2,
-                  onSelected: (_) => setState(() => _gender = 2),
-                ),
-              ],
+            Center(
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                children: [
+                  ChoiceChip(
+                    label: const Text('Male'),
+                    selected: _gender == 0,
+                    onSelected: (_) => setState(() => _gender = 0),
+                  ),
+                  ChoiceChip(
+                    label: const Text('Female'),
+                    selected: _gender == 1,
+                    onSelected: (_) => setState(() => _gender = 1),
+                  ),
+                  ChoiceChip(
+                    label: const Text('Other'),
+                    selected: _gender == 2,
+                    onSelected: (_) => setState(() => _gender = 2),
+                  ),
+                ],
+              ),
             ),
 
             const SizedBox(height: 16),
