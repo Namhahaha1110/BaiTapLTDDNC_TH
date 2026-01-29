@@ -26,6 +26,7 @@ class _InfoTabState extends State<InfoTab> {
     super.dispose();
   }
 
+  // Đổ dữ liệu từ Session.user vào form khi vào tab
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -46,6 +47,9 @@ class _InfoTabState extends State<InfoTab> {
       _music = fav.contains('Music');
       _movie = fav.contains('Movie');
       _book = fav.contains('Book');
+
+      // không bắt buộc, nhưng giúp UI refresh đúng nếu vào tab khi vừa update
+      // ignore: unnecessary_this
       setState(() {});
     }
   }
@@ -77,20 +81,31 @@ class _InfoTabState extends State<InfoTab> {
     return null;
   }
 
-  void _save() {
+  Future<void> _save() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final session = SessionScope.of(context);
-    session.updateUser(
-      fullname: _nameCtl.text.trim(),
-      email: _emailCtl.text.trim(),
-      gender: _genderText(),
-      favorite: _favoriteText(),
-    );
 
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Đã cập nhật thông tin!')));
+    try {
+      // Nếu updateUser của bạn là sync (void), `await` vẫn OK vì Dart cho phép
+      // nhưng để chắc chắn, hãy để updateUser là Future<void> nếu bạn lưu local.
+      await session.updateUser(
+        fullname: _nameCtl.text.trim(),
+        email: _emailCtl.text.trim(),
+        gender: _genderText(),
+        favorite: _favoriteText(),
+      );
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Đã cập nhật thông tin!')));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Lỗi: $e')));
+    }
   }
 
   @override
@@ -99,7 +114,7 @@ class _InfoTabState extends State<InfoTab> {
     final user = session.user;
 
     if (user == null) {
-      return const Center(child: Text('Bạn chưa đăng ký/đăng nhập.'));
+      return const Center(child: Text('Bạn chưa đăng nhập.'));
     }
 
     return SingleChildScrollView(
@@ -110,10 +125,10 @@ class _InfoTabState extends State<InfoTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Thông tin',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
+              'Tab Info (cập nhật DrawerHeader)',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 14),
 
             TextFormField(
               controller: _nameCtl,
@@ -140,38 +155,32 @@ class _InfoTabState extends State<InfoTab> {
               'Giới tính',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
             ),
-            Row(
+            const SizedBox(height: 8),
+
+            // Dùng ChoiceChip để không lỗi UI như Radio (bị xuống dòng)
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
               children: [
-                Expanded(
-                  child: RadioListTile<int>(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Male'),
-                    value: 0,
-                    groupValue: _gender,
-                    onChanged: (v) => setState(() => _gender = v ?? 0),
-                  ),
+                ChoiceChip(
+                  label: const Text('Male'),
+                  selected: _gender == 0,
+                  onSelected: (_) => setState(() => _gender = 0),
                 ),
-                Expanded(
-                  child: RadioListTile<int>(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Female'),
-                    value: 1,
-                    groupValue: _gender,
-                    onChanged: (v) => setState(() => _gender = v ?? 1),
-                  ),
+                ChoiceChip(
+                  label: const Text('Female'),
+                  selected: _gender == 1,
+                  onSelected: (_) => setState(() => _gender = 1),
                 ),
-                Expanded(
-                  child: RadioListTile<int>(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Other'),
-                    value: 2,
-                    groupValue: _gender,
-                    onChanged: (v) => setState(() => _gender = v ?? 2),
-                  ),
+                ChoiceChip(
+                  label: const Text('Other'),
+                  selected: _gender == 2,
+                  onSelected: (_) => setState(() => _gender = 2),
                 ),
               ],
             ),
-            const SizedBox(height: 10),
+
+            const SizedBox(height: 16),
 
             const Text(
               'Sở thích',
@@ -196,7 +205,8 @@ class _InfoTabState extends State<InfoTab> {
               onChanged: (v) => setState(() => _book = v ?? false),
             ),
 
-            const SizedBox(height: 12),
+            const SizedBox(height: 10),
+
             SizedBox(
               width: double.infinity,
               height: 50,
@@ -204,7 +214,7 @@ class _InfoTabState extends State<InfoTab> {
                 onPressed: _save,
                 child: const Text(
                   'LƯU THAY ĐỔI',
-                  style: TextStyle(fontWeight: FontWeight.w800),
+                  style: TextStyle(fontWeight: FontWeight.w900),
                 ),
               ),
             ),

@@ -88,12 +88,12 @@ class _RegisterPageState extends State<RegisterPage> {
 
   // ================= REGISTER =================
 
-  void _register() {
+  Future<void> _register() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final session = SessionScope.of(context);
 
-    session.register(
+    final ok = await session.register(
       fullname: _nameController.text.trim(),
       email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
@@ -101,7 +101,13 @@ class _RegisterPageState extends State<RegisterPage> {
       favorite: _favoriteText(),
     );
 
-    // Sau khi đăng ký thành công → vào Home
+    if (!ok) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Email đã tồn tại, hãy dùng email khác!')),
+      );
+      return;
+    }
+
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (_) => const Mainpage()),

@@ -27,19 +27,18 @@ class _MainpageState extends State<Mainpage> {
     final session = SessionScope.of(context);
     final user = session.user;
 
-    // ✅ QUAN TRỌNG: dùng trạng thái "đã có tài khoản đăng ký" thay vì user != null
-    final hasRegistered = session.hasRegisteredAccount;
+    /// ✅ CHỈ HIỆN INFO KHI:
+    /// - có user
+    /// - KHÔNG phải guest
+    final showInfo = user != null && !session.isGuest;
 
     final headerName = user?.fullname ?? 'Guest';
     final headerEmail = user?.email ?? '—';
 
-    // Tabs động:
-    // - Nếu CHƯA có tài khoản đăng ký (guest): tab 3 là Register
-    // - Nếu ĐÃ có tài khoản đăng ký: tab 3 là Info
     final pages = <Widget>[
       const DefaultWidget(title: 'Home'),
       const DefaultWidget(title: 'Contact'),
-      hasRegistered ? const InfoTab() : const RegisterPage(),
+      showInfo ? const InfoTab() : const RegisterPage(),
     ];
 
     final navItems = <BottomNavigationBarItem>[
@@ -49,10 +48,8 @@ class _MainpageState extends State<Mainpage> {
         label: 'Contact',
       ),
       BottomNavigationBarItem(
-        icon: Icon(
-          hasRegistered ? Icons.supervised_user_circle : Icons.person_add,
-        ),
-        label: hasRegistered ? 'Info' : 'Register',
+        icon: Icon(showInfo ? Icons.supervised_user_circle : Icons.person_add),
+        label: showInfo ? 'Info' : 'Register',
       ),
     ];
 
@@ -60,6 +57,8 @@ class _MainpageState extends State<Mainpage> {
 
     return Scaffold(
       appBar: AppBar(title: const Text('My App Navigator')),
+
+      // ================= DRAWER =================
       drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -108,9 +107,9 @@ class _MainpageState extends State<Mainpage> {
             ),
             ListTile(
               leading: Icon(
-                hasRegistered ? Icons.supervised_user_circle : Icons.person_add,
+                showInfo ? Icons.supervised_user_circle : Icons.person_add,
               ),
-              title: Text(hasRegistered ? 'Info' : 'Register'),
+              title: Text(showInfo ? 'Info' : 'Register'),
               onTap: () {
                 Navigator.pop(context);
                 setState(() => _selectedIndex = 2);
@@ -137,8 +136,10 @@ class _MainpageState extends State<Mainpage> {
         ),
       ),
 
+      // ================= BODY =================
       body: pages[_selectedIndex],
 
+      // ================= BOTTOM NAV =================
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (i) => setState(() => _selectedIndex = i),
