@@ -233,6 +233,8 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                 ),
 
+                const SizedBox(height: 16),
+
                 // ===== FAVORITE =====
                 Container(
                   padding: const EdgeInsets.all(12),
