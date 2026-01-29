@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'page/defaultwidget.dart';
@@ -27,13 +28,14 @@ class _MainpageState extends State<Mainpage> {
     final session = SessionScope.of(context);
     final user = session.user;
 
-    /// ✅ CHỈ HIỆN INFO KHI:
-    /// - có user
-    /// - KHÔNG phải guest
+    // ✅ CHỈ HIỆN INFO KHI: có user và KHÔNG phải guest
     final showInfo = user != null && !session.isGuest;
 
     final headerName = user?.fullname ?? 'Guest';
     final headerEmail = user?.email ?? '—';
+
+    final avatarPath =
+        session.avatarPath; // ✅ avatar hiện tại (null nếu chưa có / guest)
 
     final pages = <Widget>[
       const DefaultWidget(title: 'Home'),
@@ -68,9 +70,14 @@ class _MainpageState extends State<Mainpage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const CircleAvatar(
+                  CircleAvatar(
                     radius: 40,
-                    child: Icon(Icons.person, size: 40),
+                    backgroundImage: (avatarPath != null)
+                        ? FileImage(File(avatarPath))
+                        : null,
+                    child: (avatarPath == null)
+                        ? const Icon(Icons.person, size: 40)
+                        : null,
                   ),
                   const SizedBox(height: 8),
                   Text(

@@ -1,4 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+
 import '../state/session.dart';
 
 class InfoTab extends StatefulWidget {
@@ -26,7 +29,6 @@ class _InfoTabState extends State<InfoTab> {
     super.dispose();
   }
 
-  // Đổ dữ liệu từ Session.user vào form khi vào tab
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -48,8 +50,6 @@ class _InfoTabState extends State<InfoTab> {
       _movie = fav.contains('Movie');
       _book = fav.contains('Book');
 
-      // không bắt buộc, nhưng giúp UI refresh đúng nếu vào tab khi vừa update
-      // ignore: unnecessary_this
       setState(() {});
     }
   }
@@ -83,12 +83,9 @@ class _InfoTabState extends State<InfoTab> {
 
   Future<void> _save() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
-
     final session = SessionScope.of(context);
 
     try {
-      // Nếu updateUser của bạn là sync (void), `await` vẫn OK vì Dart cho phép
-      // nhưng để chắc chắn, hãy để updateUser là Future<void> nếu bạn lưu local.
       await session.updateUser(
         fullname: _nameCtl.text.trim(),
         email: _emailCtl.text.trim(),
@@ -108,14 +105,44 @@ class _InfoTabState extends State<InfoTab> {
     }
   }
 
+  Future<void> _pickAvatar() async {
+    final session = SessionScope.of(context);
+
+    final picker = ImagePicker();
+    final xfile = await picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 85,
+    );
+    if (xfile == null) return;
+
+    await session.updateAvatar(xfile.path);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Đã cập nhật avatar!')));
+  }
+
+  Future<void> _removeAvatar() async {
+    final session = SessionScope.of(context);
+    await session.updateAvatar(null);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Đã xoá avatar!')));
+  }
+
   @override
   Widget build(BuildContext context) {
     final session = SessionScope.of(context);
     final user = session.user;
 
-    if (user == null) {
-      return const Center(child: Text('Bạn chưa đăng nhập.'));
+    if (user == null || session.isGuest) {
+      return const Center(child: Text('Bạn chưa đăng nhập bằng tài khoản.'));
     }
+
+    final avatarPath = session.avatarPath;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(18),
@@ -125,10 +152,40 @@ class _InfoTabState extends State<InfoTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              'Tab Info',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900),
+              'Thông tin',
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
             ),
-            const SizedBox(height: 14),
+            const SizedBox(height: 12),
+
+            // ===== AVATAR ROW =====
+            Row(
+              children: [
+                CircleAvatar(
+                  radius: 34,
+                  backgroundImage: (avatarPath != null)
+                      ? FileImage(File(avatarPath))
+                      : null,
+                  child: (avatarPath == null)
+                      ? const Icon(Icons.person, size: 32)
+                      : null,
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: ElevatedButton.icon(
+                    onPressed: _pickAvatar,
+                    icon: const Icon(Icons.photo),
+                    label: const Text('Chọn / Đổi avatar'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                OutlinedButton(
+                  onPressed: _removeAvatar,
+                  child: const Text('Xóa'),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 16),
 
             TextFormField(
               controller: _nameCtl,
@@ -157,28 +214,27 @@ class _InfoTabState extends State<InfoTab> {
             ),
             const SizedBox(height: 8),
 
-            Center(
-              child: Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                children: [
-                  ChoiceChip(
-                    label: const Text('Male'),
-                    selected: _gender == 0,
-                    onSelected: (_) => setState(() => _gender = 0),
-                  ),
-                  ChoiceChip(
-                    label: const Text('Female'),
-                    selected: _gender == 1,
-                    onSelected: (_) => setState(() => _gender = 1),
-                  ),
-                  ChoiceChip(
-                    label: const Text('Other'),
-                    selected: _gender == 2,
-                    onSelected: (_) => setState(() => _gender = 2),
-                  ),
-                ],
-              ),
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 10,
+              runSpacing: 10,
+              children: [
+                ChoiceChip(
+                  label: const Text('Male'),
+                  selected: _gender == 0,
+                  onSelected: (_) => setState(() => _gender = 0),
+                ),
+                ChoiceChip(
+                  label: const Text('Female'),
+                  selected: _gender == 1,
+                  onSelected: (_) => setState(() => _gender = 1),
+                ),
+                ChoiceChip(
+                  label: const Text('Other'),
+                  selected: _gender == 2,
+                  onSelected: (_) => setState(() => _gender = 2),
+                ),
+              ],
             ),
 
             const SizedBox(height: 16),

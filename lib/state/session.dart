@@ -17,10 +17,19 @@ class Session extends ChangeNotifier {
   final List<UserAccount> _accounts = [];
   List<UserAccount> get accounts => List.unmodifiable(_accounts);
 
-  /// Có user đăng ký trong máy (dùng cho logic tổng quát)
   bool get hasRegisteredAccount => _accounts.isNotEmpty;
 
-  /// ================= INIT =================
+  /// ✅ avatar của user đang login (null nếu guest hoặc chưa có)
+  String? get avatarPath {
+    if (_user == null || _isGuest) return null;
+    final e = _user!.email.trim().toLowerCase();
+    final idx = _accounts.indexWhere(
+      (a) => a.user.email.trim().toLowerCase() == e,
+    );
+    if (idx == -1) return null;
+    return _accounts[idx].avatarPath;
+  }
+
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
     final raw = prefs.getString(_kAccountsKey);
@@ -40,18 +49,17 @@ class Session extends ChangeNotifier {
     await prefs.setString(_kAccountsKey, raw);
   }
 
-  /// ================= REGISTER =================
   Future<bool> register({
     required String fullname,
     required String email,
     required String password,
     required String gender,
     required String favorite,
+    String? avatarPath, // ✅ mới
   }) async {
     final e = email.trim().toLowerCase();
-    if (_accounts.any((a) => a.user.email.trim().toLowerCase() == e)) {
-      return false; // email đã tồn tại
-    }
+    if (_accounts.any((a) => a.user.email.trim().toLowerCase() == e))
+      return false;
 
     final user = User(
       fullname: fullname.trim(),
@@ -60,35 +68,33 @@ class Session extends ChangeNotifier {
       favorite: favorite,
     );
 
-    _accounts.add(UserAccount(user: user, password: password));
+    _accounts.add(
+      UserAccount(user: user, password: password, avatarPath: avatarPath),
+    );
     await _persist();
 
     _user = user;
     _isGuest = false;
-
     notifyListeners();
     return true;
   }
 
-  /// ================= LOGIN =================
   bool login({required String email, required String password}) {
     final e = email.trim().toLowerCase();
-    final found = _accounts.where(
-      (a) => a.user.email.trim().toLowerCase() == e,
-    );
-
+    final found = _accounts
+        .where((a) => a.user.email.trim().toLowerCase() == e)
+        .toList();
     if (found.isEmpty) return false;
+
     final acc = found.first;
     if (acc.password != password) return false;
 
     _user = acc.user;
     _isGuest = false;
-
     notifyListeners();
     return true;
   }
 
-  /// ================= GUEST =================
   void guestLogin() {
     _user = const User(
       fullname: 'Guest',
@@ -100,7 +106,6 @@ class Session extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// ================= UPDATE USER (INFO TAB) =================
   Future<void> updateUser({
     required String fullname,
     required String email,
@@ -112,16 +117,12 @@ class Session extends ChangeNotifier {
     final currentEmail = _user!.email.trim().toLowerCase();
     final newEmail = email.trim().toLowerCase();
 
-    // check email trùng user khác
     final conflict = _accounts.any(
       (a) =>
           a.user.email.trim().toLowerCase() == newEmail &&
           a.user.email.trim().toLowerCase() != currentEmail,
     );
-
-    if (conflict) {
-      throw Exception('Email đã tồn tại');
-    }
+    if (conflict) throw Exception('Email đã tồn tại');
 
     final idx = _accounts.indexWhere(
       (a) => a.user.email.trim().toLowerCase() == currentEmail,
@@ -129,6 +130,7 @@ class Session extends ChangeNotifier {
     if (idx == -1) return;
 
     final oldAcc = _accounts[idx];
+
     final newUser = User(
       fullname: fullname.trim(),
       email: email.trim(),
@@ -136,15 +138,29 @@ class Session extends ChangeNotifier {
       favorite: favorite,
     );
 
-    _accounts[idx] = UserAccount(user: newUser, password: oldAcc.password);
-
+    _accounts[idx] = oldAcc.copyWith(user: newUser);
     await _persist();
 
     _user = newUser;
     notifyListeners();
   }
 
-  /// ================= LOGOUT =================
+  /// ✅ cập nhật avatar cho user đang đăng nhập
+  Future<void> updateAvatar(String? newPath) async {
+    if (_user == null || _isGuest) return;
+
+    final e = _user!.email.trim().toLowerCase();
+    final idx = _accounts.indexWhere(
+      (a) => a.user.email.trim().toLowerCase() == e,
+    );
+    if (idx == -1) return;
+
+    final oldAcc = _accounts[idx];
+    _accounts[idx] = oldAcc.copyWith(avatarPath: newPath);
+    await _persist();
+    notifyListeners();
+  }
+
   void logout() {
     _user = null;
     _isGuest = false;
