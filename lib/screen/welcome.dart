@@ -13,7 +13,6 @@ class Welcome extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Image.network(
-              // link ảnh giống mẫu bạn đưa (có thể thay link khác)
               "https://st4.depositphotos.com/1010735/21836/v/450/depositphotos_218363620-stock-illustration-autumn-welcome-sign-colorful-maple.jpg",
               height: 150,
             ),

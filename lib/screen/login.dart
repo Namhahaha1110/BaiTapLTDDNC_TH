@@ -9,157 +9,159 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  bool _chkRemember = false;
-
-  final _userController = TextEditingController();
-  final _passController = TextEditingController();
-
   final _formKey = GlobalKey<FormState>();
+  final _emailCtl = TextEditingController();
+  final _passCtl = TextEditingController();
+
+  bool _hidePass = true;
 
   @override
   void dispose() {
-    _userController.dispose();
-    _passController.dispose();
+    _emailCtl.dispose();
+    _passCtl.dispose();
     super.dispose();
   }
 
-  void _onLogin() {
-    // validate giống Register: trống => báo lỗi ngay dưới ô input
-    final isValid = _formKey.currentState!.validate();
-    if (!isValid) {
-      return;
-    }
+  String? _validateEmail(String? v) {
+    final value = (v ?? '').trim();
+    if (value.isEmpty) return 'Vui lòng nhập email';
+    // Regex email cơ bản
+    final ok = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$').hasMatch(value);
+    if (!ok) return 'Email không hợp lệ';
+    return null;
+  }
 
-    // hợp lệ mới hiện OK
+  String? _validatePassword(String? v) {
+    final value = (v ?? '').trim();
+    if (value.isEmpty) return 'Vui lòng nhập mật khẩu';
+    if (value.length < 6) return 'Mật khẩu tối thiểu 6 ký tự';
+    return null;
+  }
+
+  void _submit() {
+    final ok = _formKey.currentState?.validate() ?? false;
+    if (!ok) return;
+
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          "OK | remember=$_chkRemember | user=${_userController.text.trim()}",
-        ),
-      ),
+      const SnackBar(content: Text('Đăng nhập thành công (demo)!')),
     );
+
+    // Nếu đề bài yêu cầu điều hướng sau đăng nhập, bạn nói mình, mình thêm màn hình Home.
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Tuan_01")),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
+      body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  // Nếu bạn muốn tránh 404 thì dùng Image.asset sau khi add assets
-                  Image.network(
-                    "https://icons.veryicon.com/png/miscellaneous/two-color-icon-library/user-286.png",
-                    height: 250,
-                    errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.account_circle, size: 120);
-                    },
+            padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                const Icon(
+                  Icons.account_circle,
+                  size: 96,
+                  color: Color(0xFF2196F3),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'ĐĂNG NHẬP',
+                  style: TextStyle(
+                    fontSize: 30,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF2196F3),
+                    letterSpacing: 1.0,
                   ),
+                ),
+                const SizedBox(height: 22),
 
-                  const SizedBox(height: 8),
-                  const Text(
-                    "LOGIN INFORMATION",
-                    style: TextStyle(
-                      fontSize: 20,
-                      color: Colors.blueAccent,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  TextFormField(
-                    controller: _userController,
-                    decoration: const InputDecoration(
-                      labelText: "User name",
-                      icon: Icon(Icons.account_circle),
-                    ),
-                    validator: (value) {
-                      final v = value?.trim() ?? "";
-                      if (v.isEmpty) return "Vui lòng nhập User name";
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  TextFormField(
-                    controller: _passController,
-                    obscureText: true,
-                    decoration: const InputDecoration(
-                      labelText: "Password",
-                      icon: Icon(Icons.key),
-                    ),
-                    validator: (value) {
-                      final v = value?.trim() ?? "";
-                      if (v.isEmpty) return "Vui lòng nhập Password";
-                      if (v.length < 6) return "Password tối thiểu 6 ký tự";
-                      return null;
-                    },
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Row(
+                Form(
+                  key: _formKey,
+                  child: Column(
                     children: [
-                      Checkbox(
-                        value: _chkRemember,
-                        onChanged: (value) {
-                          setState(() => _chkRemember = value ?? false);
-                        },
+                      TextFormField(
+                        controller: _emailCtl,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: _validateEmail,
+                        decoration: const InputDecoration(
+                          prefixIcon: Icon(Icons.email),
+                          hintText: 'Email',
+                        ),
                       ),
-                      const Text(
-                        "Remember me",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const Spacer(),
-                      TextButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Forgot Password tapped"),
+                      const SizedBox(height: 14),
+                      TextFormField(
+                        controller: _passCtl,
+                        obscureText: _hidePass,
+                        validator: _validatePassword,
+                        decoration: InputDecoration(
+                          prefixIcon: const Icon(Icons.lock),
+                          hintText: 'Mật khẩu',
+                          suffixIcon: IconButton(
+                            onPressed: () =>
+                                setState(() => _hidePass = !_hidePass),
+                            icon: Icon(
+                              _hidePass
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
                             ),
-                          );
-                        },
-                        child: const Text("Forgot Password"),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 18),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 54,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2196F3),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          onPressed: _submit,
+                          child: const Text(
+                            'ĐĂNG NHẬP',
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ),
                       ),
                     ],
                   ),
+                ),
 
-                  const SizedBox(height: 8),
-
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: _onLogin,
-                      child: const Text("OK"),
+                const SizedBox(height: 18),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Chưa có tài khoản?  ',
+                      style: TextStyle(fontSize: 16),
                     ),
-                  ),
-
-                  const SizedBox(height: 8),
-
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text("Don't have account? "),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => const Register()),
-                          );
-                        },
-                        child: const Text("Register"),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const Register()),
+                        );
+                      },
+                      child: const Text(
+                        'Đăng ký ngay',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFF2196F3),
+                        ),
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
