@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+
+import '../mainpage.dart';
+import '../state/session.dart';
 import 'register.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class LoginPage extends StatefulWidget {
+  const LoginPage({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailCtl = TextEditingController();
   final _passCtl = TextEditingController();
@@ -25,7 +28,6 @@ class _LoginState extends State<Login> {
   String? _validateEmail(String? v) {
     final value = (v ?? '').trim();
     if (value.isEmpty) return 'Vui lòng nhập email';
-    // Regex email cơ bản
     final ok = RegExp(r'^[\w\.-]+@[\w\.-]+\.\w+$').hasMatch(value);
     if (!ok) return 'Email không hợp lệ';
     return null;
@@ -38,15 +40,40 @@ class _LoginState extends State<Login> {
     return null;
   }
 
-  void _submit() {
-    final ok = _formKey.currentState?.validate() ?? false;
-    if (!ok) return;
+  void _login() {
+    if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Đăng nhập thành công (demo)!')),
+    final session = SessionScope.of(context);
+    final ok = session.login(
+      email: _emailCtl.text.trim(),
+      password: _passCtl.text.trim(),
     );
 
-    // Nếu đề bài yêu cầu điều hướng sau đăng nhập, bạn nói mình, mình thêm màn hình Home.
+    if (!ok) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Sai email/mật khẩu hoặc bạn chưa đăng ký!'),
+        ),
+      );
+      return;
+    }
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const Mainpage()),
+      (_) => false,
+    );
+  }
+
+  void _guestLogin() {
+    final session = SessionScope.of(context);
+    session.guestLogin();
+
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (_) => const Mainpage()),
+      (_) => false,
+    );
   }
 
   @override
@@ -121,13 +148,27 @@ class _LoginState extends State<Login> {
                               borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          onPressed: _submit,
+                          onPressed: _login,
                           child: const Text(
                             'ĐĂNG NHẬP',
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.w800,
                             ),
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 12),
+
+                      SizedBox(
+                        width: double.infinity,
+                        height: 52,
+                        child: OutlinedButton(
+                          onPressed: _guestLogin,
+                          child: const Text(
+                            'DÙNG TÀI KHOẢN KHÁCH',
+                            style: TextStyle(fontWeight: FontWeight.w800),
                           ),
                         ),
                       ),
@@ -147,7 +188,9 @@ class _LoginState extends State<Login> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const Register()),
+                          MaterialPageRoute(
+                            builder: (_) => const RegisterPage(),
+                          ),
                         );
                       },
                       child: const Text(
