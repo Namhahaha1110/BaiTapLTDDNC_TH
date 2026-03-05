@@ -1,0 +1,58 @@
+[
+  {
+    "id": 1,
+    "name": "Sổ tay ghi chép",
+    "categoryId": 1,
+    "price": 45000,
+    "imageUrl": "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=800"
+  },
+  {
+    "id": 2,
+    "name": "Tiểu thuyết văn học",
+    "categoryId": 1,
+    "price": 89000,
+    "imageUrl": "https://images.unsplash.com/photo-1512820790803-83ca734da794?w=800"
+  },
+  {
+    "id": 3,
+    "name": "Áo khoác denim",
+    "categoryId": 2,
+    "price": 329000,
+    "imageUrl": "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800"
+  },
+  {
+    "id": 4,
+    "name": "Túi canvas",
+    "categoryId": 2,
+    "price": 119000,
+    "imageUrl": "https://images.unsplash.com/photo-1591561954557-26941169b49e?w=800"
+  },
+  {
+    "id": 5,
+    "name": "Bộ nồi inox",
+    "categoryId": 3,
+    "price": 599000,
+    "imageUrl": "https://images.unsplash.com/photo-1585515656973-5f2c44b7d5f2?w=800"
+  },
+  {
+    "id": 6,
+    "name": "Máy xay sinh tố",
+    "categoryId": 3,
+    "price": 749000,
+    "imageUrl": "https://images.unsplash.com/photo-1570222094114-d054a817e56b?w=800"
+  },
+  {
+    "id": 7,
+    "name": "Thảm tập yoga",
+    "categoryId": 4,
+    "price": 199000,
+    "imageUrl": "https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=800"
+  },
+  {
+    "id": 8,
+    "name": "Bình nước thể thao",
+    "categoryId": 4,
+    "price": 99000,
+    "imageUrl": "https://images.unsplash.com/photo-1523362628745-0c100150b504?w=800"
+  }
+]

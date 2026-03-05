@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "410697487099",
+    "project_id": "ltdd-th-lehoangnam",
+    "storage_bucket": "ltdd-th-lehoangnam.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:410697487099:android:4e94e319a0a268afdfd65e",
+        "android_client_info": {
+          "package_name": "com.example.tuan1_ltdd"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-g_sFvEvgVKZeu_23Re5pq1GQsbyJIqc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

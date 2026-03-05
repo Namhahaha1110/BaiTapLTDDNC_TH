@@ -14,7 +14,7 @@ Project hiện tại đã được mở rộng từ các màn hình Welcome/Logi
 
 ---
 
-## ✨ Tính năng chính (theo code hiện tại)
+## ✨ Tính năng chính 
 
 ### 1) Authentication (Login / Register)
 - **Đăng ký** (`lib/page/register.dart`)
@@ -81,8 +81,6 @@ lib/
 └── state/
     └── session.dart
 ```
-
-> Ghi chú: README cũ đang ghi `lib/screen/...` và `welcome.dart` nhưng code hiện tại dùng `lib/page/...` và app khởi động vào `LoginPage`.
 
 ---
 

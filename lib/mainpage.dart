@@ -2,9 +2,15 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'page/defaultwidget.dart';
+import 'page/home_dashboard.dart';
 import 'page/register.dart';
 import 'page/login.dart';
 import 'page/info_tab.dart';
+import 'page/product_list_screen.dart';
+import 'page/product_grid_screen.dart';
+import 'page/product_table_screen.dart';
+import 'page/firebase_category_manager_screen.dart';
+import 'page/firebase_product_manager_screen.dart';
 import 'state/session.dart';
 
 class Mainpage extends StatefulWidget {
@@ -38,7 +44,7 @@ class _MainpageState extends State<Mainpage> {
         session.avatarPath; // ✅ avatar hiện tại (null nếu chưa có / guest)
 
     final pages = <Widget>[
-      const DefaultWidget(title: 'Home'),
+      HomeDashboard(),
       const DefaultWidget(title: 'Contact'),
       showInfo ? const InfoTab() : const RegisterPage(),
     ];
@@ -120,6 +126,71 @@ class _MainpageState extends State<Mainpage> {
               onTap: () {
                 Navigator.pop(context);
                 setState(() => _selectedIndex = 2);
+              },
+            ),
+
+            const Divider(),
+
+            ListTile(
+              leading: const Icon(Icons.list),
+              title: const Text('Sản phẩm (List)'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProductListScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.grid_on),
+              title: const Text('Sản phẩm (Grid)'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProductGridScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.table_rows),
+              title: const Text('Sản phẩm (Table)'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProductTableScreen()),
+                );
+              },
+            ),
+
+            const Divider(),
+
+            ListTile(
+              leading: const Icon(Icons.cloud, color: Colors.orange),
+              title: const Text('Firebase - Danh mục'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const FirebaseCategoryManagerScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.cloud_upload, color: Colors.orange),
+              title: const Text('Firebase - Sản phẩm'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const FirebaseProductManagerScreen(),
+                  ),
+                );
               },
             ),
 
