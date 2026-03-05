@@ -2,7 +2,11 @@
 
 Ứng dụng Flutter phục vụ môn **Lập trình thiết bị di động nâng cao - Thực hành**.
 
-Project hiện tại đã được mở rộng từ các màn hình Welcome/Login/Register ban đầu sang luồng **đăng nhập/đăng ký có lưu nhiều tài khoản**, có **Guest mode**, có **màn hình chỉnh sửa thông tin**, và **chọn avatar từ thư viện ảnh**.
+Project hiện tại gồm đầy đủ các phần:
+- Đăng nhập/đăng ký, quản lý session local và chỉnh sửa thông tin người dùng
+- Hiển thị sản phẩm theo **List / Grid / Table** từ dữ liệu JSON (async/await)
+- CRUD **Categories / Products** với **Firebase Firestore** (realtime)
+- Home Dashboard mới, hiển thị các sản phẩm đã tạo từ Firebase
 
 ---
 
@@ -52,6 +56,30 @@ Project hiện tại đã được mở rộng từ các màn hình Welcome/Logi
   - Cho phép chọn **avatar từ Gallery** (image_picker)
   - Avatar được lưu theo account (qua `avatarPath`)
 
+### 5) Sản phẩm từ JSON (Tuần 05 - async/await)
+- Đọc dữ liệu từ file JSON trong assets bằng `Future` + `async/await`
+- Hiển thị dữ liệu ở 3 màn hình:
+  - `lib/page/product_list_screen.dart`
+  - `lib/page/product_grid_screen.dart`
+  - `lib/page/product_table_screen.dart`
+- Tách lớp lấy dữ liệu:
+  - `lib/getdata/category_data.dart`
+  - `lib/getdata/product_data.dart`
+
+### 6) Firebase Firestore CRUD (Tuần 07)
+- CRUD danh mục: `lib/page/firebase_category_manager_screen.dart`
+- CRUD sản phẩm: `lib/page/firebase_product_manager_screen.dart`
+- Màn hình hiển thị sản phẩm Firebase:
+  - `lib/page/firebase_product_list_screen.dart`
+- Realtime update sau khi thêm/sửa/xóa
+- Xử lý thao tác Firestore tập trung tại:
+  - `lib/data/firebase_helper.dart`
+
+### 7) Home Dashboard mới
+- Trang Home được thiết kế lại theo dạng dashboard
+- Hiển thị danh sách sản phẩm mới nhất từ Firebase
+- File: `lib/page/home_dashboard.dart`
+
 ---
 
 ## 🛠️ Công nghệ sử dụng
@@ -69,14 +97,32 @@ Project hiện tại đã được mở rộng từ các màn hình Welcome/Logi
 lib/
 ├── main.dart
 ├── mainpage.dart
+├── config/
+│   └── default.dart
+├── data/
+│   ├── app_data_info.dart
+│   └── firebase_helper.dart
+├── getdata/
+│   ├── category_data.dart
+│   └── product_data.dart
 ├── model/
+│   ├── category.dart
+│   ├── product.dart
 │   ├── user.dart
-│   └── user_account.dart
+│   ├── user_account.dart
+│   └── user_profile.dart
 ├── page/
 │   ├── defaultwidget.dart
 │   ├── detail.dart
+│   ├── firebase_category_manager_screen.dart
+│   ├── firebase_product_list_screen.dart
+│   ├── firebase_product_manager_screen.dart
+│   ├── home_dashboard.dart
 │   ├── info_tab.dart
 │   ├── login.dart
+│   ├── product_grid_screen.dart
+│   ├── product_list_screen.dart
+│   ├── product_table_screen.dart
 │   └── register.dart
 └── state/
     └── session.dart
@@ -112,6 +158,3 @@ flutter run
 
 ---
 
-## 📝 Ghi chú
-- Đây là dự án học tập, chưa có backend.
-- Dữ liệu tài khoản được lưu local bằng SharedPreferences (phù hợp demo / bài tập).
