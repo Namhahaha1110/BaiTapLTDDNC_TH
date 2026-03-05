@@ -1,13 +1,10 @@
 # 📱 BaiTapLTDDNC_TH
 
-Ứng dụng Flutter demo với các màn hình Welcome, Login và Register cho môn **Lập trình thiết bị di động nâng cao - Thực hành**. 
+Ứng dụng Flutter phục vụ môn **Lập trình thiết bị di động nâng cao - Thực hành**.
 
-## 📝 Mô tả
+Project hiện tại đã được mở rộng từ các màn hình Welcome/Login/Register ban đầu sang luồng **đăng nhập/đăng ký có lưu nhiều tài khoản**, có **Guest mode**, có **màn hình chỉnh sửa thông tin**, và **chọn avatar từ thư viện ảnh**.
 
-Đây là bài tập thực hành tuần 1 (Tuan_01) xây dựng giao diện người dùng cơ bản với Flutter, bao gồm: 
-- Màn hình Welcome giới thiệu
-- Màn hình Login với xác thực form
-- Màn hình Register với validation đầy đủ
+---
 
 ## 👨‍🎓 Thông tin sinh viên
 
@@ -15,175 +12,108 @@
 - **MSSV**: 23DH114467
 - **Môn học**: Lập trình thiết bị di động nâng cao - Thực hành
 
-## ✨ Tính năng
+---
 
-### 1. Màn hình Welcome (`welcome. dart`)
-- Hiển thị ảnh chào mừng
-- Thông tin sinh viên
-- Nút "Continue" để chuyển sang màn hình Login
+## ✨ Tính năng chính (theo code hiện tại)
 
-### 2. Màn hình Login (`login.dart`)
-- Form đăng nhập với validation: 
-  - Username: Không được để trống
-  - Password:  Tối thiểu 6 ký tự
-- Checkbox "Remember me"
-- Link "Forgot Password"
-- Link chuyển sang màn hình Register
-- Hiển thị thông báo khi đăng nhập thành công
+### 1) Authentication (Login / Register)
+- **Đăng ký** (`lib/page/register.dart`)
+  - Nhập: Fullname, Email, Password, Confirm Password
+  - Chọn **Gender** (Male/Female/Other)
+  - Chọn **Favorite** (Music/Movie/Book) (có thể chọn nhiều)
+  - Validate dữ liệu (email đúng định dạng, password >= 6, confirm khớp, ...)
+  - Lưu account vào bộ nhớ cục bộ (SharedPreferences)
 
-### 3. Màn hình Register (`register.dart`)
-- Form đăng ký với validation đầy đủ:
-  - Username: Tối thiểu 3 ký tự
-  - Email: Phải có định dạng hợp lệ (@, .)
-  - Password: Tối thiểu 6 ký tự, có nút hiện/ẩn mật khẩu
-  - Confirm Password: Phải khớp với mật khẩu
-- Checkbox đồng ý điều khoản
-- Nút "CREATE ACCOUNT"
-- Link "Back to Login"
+- **Đăng nhập** (`lib/page/login.dart`)
+  - Đăng nhập bằng **Email + Password**
+  - Có **Guest login** (vào app mà không cần đăng ký)
+
+### 2) Lưu nhiều user + quản lý session
+- Lưu danh sách account (nhiều user) bằng `SharedPreferences`
+- Session/state tập trung trong:
+  - `lib/state/session.dart`
+  - Model:
+    - `lib/model/user.dart`
+    - `lib/model/user_account.dart`
+
+### 3) Mainpage + Drawer + BottomNavigation
+- `lib/mainpage.dart`
+- Có Drawer hiển thị:
+  - Tên, email user hiện tại
+  - Avatar (nếu có)
+- BottomNavigation gồm các tab:
+  - Home
+  - Contact
+  - Info (khi đã đăng nhập) hoặc Register (khi guest / chưa có user hợp lệ)
+
+### 4) Cập nhật thông tin & chọn Avatar
+- Tab **Info**: `lib/page/info_tab.dart`
+  - Cho phép cập nhật fullname/email/gender/favorite
+  - Cho phép chọn **avatar từ Gallery** (image_picker)
+  - Avatar được lưu theo account (qua `avatarPath`)
+
+---
 
 ## 🛠️ Công nghệ sử dụng
 
 - **Framework**: Flutter
 - **Ngôn ngữ**: Dart
-- **SDK**: ^3.10.7
-- **Dependencies**:
-  - `flutter` (SDK)
-  - `cupertino_icons:  ^1.0.8`
-
-## 📁 Cấu trúc thư mục
-
-```
-lib/
-├── main.dart              # Entry point của ứng dụng
-└── screen/
-    ├── welcome. dart       # Màn hình Welcome
-    ├── login.dart         # Màn hình Login
-    └── register.dart      # Màn hình Register
-assets/
-└── images/                # Thư mục chứa hình ảnh
-```
-
-## 🚀 Cài đặt và Chạy
-
-### Yêu cầu
-- Flutter SDK (phiên bản ^3.10.7 trở lên)
-- Dart SDK
-- Android Studio / VS Code với Flutter extension
-- Thiết bị Android/iOS hoặc Emulator
-
-### Các bước cài đặt
-
-1. **Clone repository**
-```bash
-git clone https://github.com/Namhahaha1110/BaiTapLTDDNC_TH.git
-cd BaiTapLTDDNC_TH
-```
-
-2. **Cài đặt dependencies**
-```bash
-flutter pub get
-```
-
-3. **Chạy ứng dụng**
-```bash
-flutter run
-```
-
-### Chạy trên các nền tảng khác nhau
-
-```bash
-# Android
-flutter run -d android
-
-# iOS (chỉ trên macOS)
-flutter run -d ios
-
-# Web
-flutter run -d chrome
-
-# Windows
-flutter run -d windows
-
-# Linux
-flutter run -d linux
-
-# macOS
-flutter run -d macos
-```
-
-## 🔄 Luồng điều hướng
-
-```
-Welcome Screen
-    ↓
-  [Continue]
-    ↓
-Login Screen ←──┐
-    ↓           │
-  [Register]    │
-    ↓           │
-Register Screen │
-    ↓           │
-[Back to Login]─┘
-```
-
-## ⚙️ Chi tiết kỹ thuật
-
-### Validation Rules
-
-**Login:**
-- Username: Không để trống
-- Password: Không để trống, tối thiểu 6 ký tự
-
-**Register:**
-- Username:  Không để trống, tối thiểu 3 ký tự
-- Email:  Không để trống, phải chứa @ và . 
-- Password: Không để trống, tối thiểu 6 ký tự
-- Confirm Password: Phải khớp với password
-- Terms Agreement: Phải đồng ý điều khoản
-
-### State Management
-- Sử dụng `StatefulWidget` cho các màn hình có tương tác
-- `TextEditingController` để quản lý input
-- `GlobalKey<FormState>` để validate form
-
-## 📝 Ghi chú
-
-- Đây là ứng dụng demo, chưa có backend thật
-- Chức năng đăng nhập/đăng ký chỉ hiển thị SnackBar thông báo
-- Một số hình ảnh sử dụng network image (có thể thay bằng local assets)
-
-## 🔮 Phát triển tương lai
-
-- [ ] Tích hợp backend API
-- [ ] Lưu trữ thông tin người dùng với SQLite/SharedPreferences
-- [ ] Thêm chức năng Forgot Password
-- [ ] Xác thực email
-- [ ] Login với Google/Facebook
-- [ ] Dark mode support
-- [ ] Đa ngôn ngữ (i18n)
-
-## 👨‍💻 Tác giả
-
-**Lê Hoàng Nam** - [Namhahaha1110](https://github.com/Namhahaha1110)
-
-## 📄 License
-
-Dự án này được phát triển cho mục đích học tập. 
-
-## 🤝 Đóng góp
-
-Mọi đóng góp đều được chào đón!  Nếu bạn muốn cải thiện dự án: 
-1. Fork repository
-2. Tạo branch mới (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Mở Pull Request
-
-## 📞 Liên hệ
-
-Nếu có thắc mắc về dự án, vui lòng tạo issue trên GitHub. 
+- Lưu dữ liệu local: `shared_preferences`
+- Chọn ảnh: `image_picker`
 
 ---
 
-**Note**:  Đây là bài tập thực hành môn Lập trình thiết bị di động nâng cao - Thực hành
+## 📁 Cấu trúc thư mục (cập nhật)
+
+```txt
+lib/
+├── main.dart
+├── mainpage.dart
+├── model/
+│   ├── user.dart
+│   └── user_account.dart
+├── page/
+│   ├── defaultwidget.dart
+│   ├── detail.dart
+│   ├── info_tab.dart
+│   ├── login.dart
+│   └── register.dart
+└── state/
+    └── session.dart
+```
+
+> Ghi chú: README cũ đang ghi `lib/screen/...` và `welcome.dart` nhưng code hiện tại dùng `lib/page/...` và app khởi động vào `LoginPage`.
+
+---
+
+## 🔄 Luồng hoạt động (high-level)
+
+```txt
+App start
+  ↓
+LoginPage
+  ├─ Login thành công → Mainpage (Home/Contact/Info)
+  └─ Guest login      → Mainpage (Home/Contact/Register)
+```
+
+---
+
+## 🚀 Cài đặt và chạy
+
+### Yêu cầu
+- Flutter SDK
+- Android Studio / VS Code (Flutter extension)
+
+### Chạy dự án
+```bash
+git clone https://github.com/Namhahaha1110/BaiTapLTDDNC_TH.git
+cd BaiTapLTDDNC_TH
+flutter pub get
+flutter run
+```
+
+---
+
+## 📝 Ghi chú
+- Đây là dự án học tập, chưa có backend.
+- Dữ liệu tài khoản được lưu local bằng SharedPreferences (phù hợp demo / bài tập).
