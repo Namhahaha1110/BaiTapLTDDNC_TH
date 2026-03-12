@@ -1,0 +1,26 @@
+TUẦN 06: LƯU TRỮ DỮ LIỆU VỚI SQLITE
+1.	Yêu cầu
+-	Sử dụng database Sqlite để lưu trữ dữ liệu
+-	Thực hiện tính năng CRUD (Create, Read, Update, Delete) trên table categories, products
+-	Yêu cầu bài nộp:
+•	Tạo 1 database đặt tên: db_23dh114467.db
+•	Tạo 2 hay nhiều bảng data khác với bài demo (đặt tên bảng, các trường dữ liệu phải khác)
+•	Tạo giao diện tương ứng với database và có ý nghĩa
+•	Design lại giao diện. Chấm điểm dựa trên mẫu design của sinh viên.
+•	Bài mẫu được giao là code có sẵn chạy được CRUD table categories, products. Sinh viên chỉ cần tạo project, copy thư mục lib, và thêm thư viện
+(thêm thư viện trước khi copy). Hướng dẫn xem file database trong video. Lưu ý bài tập chỉ chạy được trên máy ảo hoặc máy thật. Không chạy được trên trình duyệt.
+2.	Chức năng
+Tạo 1 datatase đặt tên demo_app.db (tạo trong code)
+Thêm 2 table: categories, products
+
+
+Kết quả đạt được
+ 
+ 	 
+3.	Thực hiện
+Thêm các thư viện: có thể copy được
+
+ 
+ 
+Lưu ý:
+Khi tạo database Sqlite, nên tạo câu lệnh tạo tất cả các table cần dùng. Vì nếu bổ sung thêm table, phải làm câu lệnh update, hoặc phải xóa database để thực hiện lại.

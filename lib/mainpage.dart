@@ -10,7 +10,17 @@ import 'page/product_list_screen.dart';
 import 'page/product_grid_screen.dart';
 import 'page/product_table_screen.dart';
 import 'page/firebase_category_manager_screen.dart';
+import 'page/firebase_product_list_screen.dart';
 import 'page/firebase_product_manager_screen.dart';
+import 'state/api_example_widget.dart';
+import 'state/counter_bloc_widget.dart';
+import 'state/counter_getx_widget.dart';
+import 'state/counter_inherited_widget.dart';
+import 'state/counter_mobx_widget.dart';
+import 'state/counter_provider_widget.dart';
+import 'state/counter_redux_widget.dart';
+import 'state/counter_riverpod_widget.dart';
+import 'state/counter_stateful_widget.dart';
 import 'state/session.dart';
 
 class Mainpage extends StatefulWidget {
@@ -22,6 +32,44 @@ class Mainpage extends StatefulWidget {
 
 class _MainpageState extends State<Mainpage> {
   int _selectedIndex = 0;
+  int _selectedDemoIndex = 0;
+
+  static const List<String> _demoTitles = [
+    'StatefulWidget',
+    'Provider',
+    'GetX',
+    'Riverpod',
+    'Bloc/Cubit',
+    'InheritedWidget',
+    'MobX',
+    'Redux',
+    'API',
+  ];
+
+  Widget _buildDemoWidget(int index) {
+    switch (index) {
+      case 0:
+        return const CounterStatefulWidget();
+      case 1:
+        return const CounterProviderWidget();
+      case 2:
+        return CounterGetXWidget();
+      case 3:
+        return const CounterRiverpodWidget();
+      case 4:
+        return const CounterBlocWidget();
+      case 5:
+        return const CounterInheritedWidget();
+      case 6:
+        return const CounterMobXWidget();
+      case 7:
+        return CounterReduxWidget();
+      case 8:
+        return const ApiExampleWidget();
+      default:
+        return const SizedBox.shrink();
+    }
+  }
 
   void _safeSetIndex(int i, int max) {
     if (i < 0) i = 0;
@@ -131,45 +179,25 @@ class _MainpageState extends State<Mainpage> {
 
             const Divider(),
 
-            ListTile(
-              leading: const Icon(Icons.list),
-              title: const Text('Sản phẩm (List)'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ProductListScreen()),
-                );
-              },
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  Icon(Icons.cloud, color: Colors.orange),
+                  SizedBox(width: 8),
+                  Text(
+                    'Firebase Firestore',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.orange,
+                    ),
+                  ),
+                ],
+              ),
             ),
             ListTile(
-              leading: const Icon(Icons.grid_on),
-              title: const Text('Sản phẩm (Grid)'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ProductGridScreen()),
-                );
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.table_rows),
-              title: const Text('Sản phẩm (Table)'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => const ProductTableScreen()),
-                );
-              },
-            ),
-
-            const Divider(),
-
-            ListTile(
-              leading: const Icon(Icons.cloud, color: Colors.orange),
-              title: const Text('Firebase - Danh mục'),
+              leading: const Icon(Icons.category, color: Colors.orange),
+              title: const Text('Quản lý danh mục (Firebase)'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -181,8 +209,8 @@ class _MainpageState extends State<Mainpage> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.cloud_upload, color: Colors.orange),
-              title: const Text('Firebase - Sản phẩm'),
+              leading: const Icon(Icons.inventory_2, color: Colors.orange),
+              title: const Text('Quản lý sản phẩm (Firebase)'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -192,6 +220,135 @@ class _MainpageState extends State<Mainpage> {
                   ),
                 );
               },
+            ),
+
+            const Divider(),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
+                  Icon(Icons.view_list, color: Colors.green),
+                  SizedBox(width: 8),
+                  Text(
+                    'Hiển thị sản phẩm',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.list, color: Colors.blue),
+              title: const Text('Sản phẩm SQLite (List)'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProductListScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.list_alt, color: Colors.amber),
+              title: const Text('Sản phẩm Firebase (List)'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const FirebaseProductListScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.grid_on, color: Colors.blue),
+              title: const Text('Sản phẩm SQLite (Grid)'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProductGridScreen()),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.table_rows, color: Colors.blue),
+              title: const Text('Sản phẩm SQLite (Table)'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ProductTableScreen()),
+                );
+              },
+            ),
+
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 10, 8, 10),
+              child: Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(14),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(Icons.developer_board, color: Colors.blue),
+                          SizedBox(width: 8),
+                          Text(
+                            'State & API',
+                            style: TextStyle(
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'Chọn một phương pháp quản lý state hoặc demo API để xem ví dụ trực tiếp.',
+                        style: TextStyle(color: Colors.black54),
+                      ),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: List.generate(
+                          _demoTitles.length,
+                          (i) => ChoiceChip(
+                            label: Text(_demoTitles[i]),
+                            selected: _selectedDemoIndex == i,
+                            selectedColor: Colors.blue.shade100,
+                            onSelected: (_) {
+                              setState(() {
+                                _selectedDemoIndex = i;
+                              });
+                            },
+                          ),
+                        ),
+                      ),
+                      const Divider(height: 22),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: Colors.blueGrey.withValues(alpha: 0.08),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: _buildDemoWidget(_selectedDemoIndex),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
 
             const Divider(),
