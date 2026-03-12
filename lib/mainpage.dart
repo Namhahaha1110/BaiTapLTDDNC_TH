@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 
-import 'page/defaultwidget.dart';
+import 'page/contact_page.dart';
 import 'page/home_dashboard.dart';
 import 'page/register.dart';
 import 'page/login.dart';
@@ -9,6 +9,9 @@ import 'page/info_tab.dart';
 import 'page/product_list_screen.dart';
 import 'page/product_grid_screen.dart';
 import 'page/product_table_screen.dart';
+import 'page/sqlite_product_display_screen.dart';
+import 'page/sqlite_category_manager_screen.dart';
+import 'page/sqlite_product_manager_screen.dart';
 import 'page/firebase_category_manager_screen.dart';
 import 'page/firebase_product_list_screen.dart';
 import 'page/firebase_product_manager_screen.dart';
@@ -93,7 +96,7 @@ class _MainpageState extends State<Mainpage> {
 
     final pages = <Widget>[
       HomeDashboard(),
-      const DefaultWidget(title: 'Contact'),
+      const ContactPage(),
       showInfo ? const InfoTab() : const RegisterPage(),
     ];
 
@@ -183,6 +186,51 @@ class _MainpageState extends State<Mainpage> {
               padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               child: Row(
                 children: [
+                  Icon(Icons.storage, color: Colors.blue),
+                  SizedBox(width: 8),
+                  Text(
+                    'SQLite Database',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.category, color: Colors.blue),
+              title: const Text('Quản lý danh mục (SQLite)'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const SqliteCategoryManagerScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.inventory, color: Colors.blue),
+              title: const Text('Quản lý sản phẩm (SQLite)'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const SqliteProductManagerScreen(),
+                  ),
+                );
+              },
+            ),
+
+            const Divider(),
+
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                children: [
                   Icon(Icons.cloud, color: Colors.orange),
                   SizedBox(width: 8),
                   Text(
@@ -242,7 +290,20 @@ class _MainpageState extends State<Mainpage> {
             ),
             ListTile(
               leading: const Icon(Icons.list, color: Colors.blue),
-              title: const Text('Sản phẩm SQLite (List)'),
+              title: const Text('Sản phẩm SQLite đã tạo'),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const SqliteProductDisplayScreen(),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.list, color: Colors.blue),
+              title: const Text('Sản phẩm (List)'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -266,7 +327,7 @@ class _MainpageState extends State<Mainpage> {
             ),
             ListTile(
               leading: const Icon(Icons.grid_on, color: Colors.blue),
-              title: const Text('Sản phẩm SQLite (Grid)'),
+              title: const Text('Sản phẩm (Grid)'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -277,7 +338,7 @@ class _MainpageState extends State<Mainpage> {
             ),
             ListTile(
               leading: const Icon(Icons.table_rows, color: Colors.blue),
-              title: const Text('Sản phẩm SQLite (Table)'),
+              title: const Text('Sản phẩm (Table)'),
               onTap: () {
                 Navigator.pop(context);
                 Navigator.push(
